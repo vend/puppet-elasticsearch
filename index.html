@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Puppet-elasticsearch by elasticsearch</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Puppet-elasticsearch</h1>
+        <h2>Elasticsearch Puppet module</h2>
+        <a href="https://github.com/elasticsearch/puppet-elasticsearch" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a name="puppet-elasticsearch" class="anchor" href="#puppet-elasticsearch"><span class="octicon octicon-link"></span></a>puppet-elasticsearch</h1>
+
+<p>A puppet module for managing elasticsearch nodes</p>
+
+<p><a href="http://www.elasticsearch.org/">http://www.elasticsearch.org/</a></p>
+
+<p><a href="https://travis-ci.org/elasticsearch/puppet-elasticsearch"><img src="https://travis-ci.org/elasticsearch/puppet-elasticsearch.png?branch=master" alt="Build Status"></a></p>
+
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>Installation, make sure service is running and will be started at boot time:</p>
+
+<pre><code> class { 'elasticsearch': }
+</code></pre>
+
+<p>Install a certain version:</p>
+
+<pre><code> class { 'elasticsearch':
+   version =&gt; '0.90.3'
+ }
+</code></pre>
+
+<p>This assumes an elasticsearch package is already available to your distribution's package manager. To install it in a different way:</p>
+
+<p>To download from http/https/ftp source:</p>
+
+<pre><code> class { 'elasticsearch':
+   package_url =&gt; 'https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-0.90.7.deb'
+ }
+</code></pre>
+
+<p>To download from a puppet:// source:</p>
+
+<pre><code> class { 'elasticsearch':
+   package_url =&gt; 'puppet:///path/to/elasticsearch-0.90.7.deb'
+ }
+</code></pre>
+
+<p>Or use a local file source:</p>
+
+<pre><code> class { 'elasticsearch':
+   package_url =&gt; 'file:/path/to/elasticsearch-0.90.7.deb'
+ }
+</code></pre>
+
+<p>Automatic upgrade of the software ( default set to false ):</p>
+
+<pre><code> class { 'elasticsearch':
+   autoupgrade =&gt; true
+ }
+</code></pre>
+
+<p>Removal/decommissioning:</p>
+
+<pre><code> class { 'elasticsearch':
+   ensure =&gt; 'absent'
+ }
+</code></pre>
+
+<p>Install everything but disable service(s) afterwards:</p>
+
+<pre><code> class { 'elasticsearch':
+   status =&gt; 'disabled'
+ }
+</code></pre>
+
+<p>Disable automated restart of Elasticsearch on config file change:</p>
+
+<pre><code> class { 'elasticsearch':
+   restart_on_change =&gt; false
+ }
+</code></pre>
+
+<p>For the config variable a hash needs to be passed:</p>
+
+<pre><code> class { 'elasticsearch':
+   config                   =&gt; {
+     'node'                 =&gt; {
+       'name'               =&gt; 'elasticsearch001'
+     },
+     'index'                =&gt; {
+       'number_of_replicas' =&gt; '0',
+       'number_of_shards'   =&gt; '5'
+     },
+     'network'              =&gt; {
+       'host'               =&gt; $::ipaddress
+     }
+   }
+ }
+</code></pre>
+
+<p>Short write up of the config hash is also possible.</p>
+
+<p>Instead of writing the full hash representation:</p>
+
+<pre><code> class { 'elasticsearch':
+   config                 =&gt; {
+     'cluster'            =&gt; {
+       'name'             =&gt; 'ClusterName',
+       'routing'          =&gt; {
+         'allocation'     =&gt; {
+           'awareness'    =&gt; {
+             'attributes' =&gt; 'rack'
+           }
+         }
+       }
+     }
+   }
+ }
+</code></pre>
+
+<p>You can write the dotted key naming:</p>
+
+<pre><code> class { 'elasticsearch':
+   config =&gt; {
+     'cluster' =&gt; {
+       'name' =&gt; 'ClusterName',
+       'routing.allocation.awareness.attributes' =&gt; 'rack'
+     }
+   }
+ }
+</code></pre>
+
+<h2>
+<a name="manage-templates" class="anchor" href="#manage-templates"><span class="octicon octicon-link"></span></a>Manage templates</h2>
+
+<h3>
+<a name="add-a-new-template" class="anchor" href="#add-a-new-template"><span class="octicon octicon-link"></span></a>Add a new template</h3>
+
+<p>This will install and/or replace the template in Elasticearch</p>
+
+<pre><code> elasticsearch::template { 'templatename':
+   file =&gt; 'puppet:///path/to/template.json'
+ }
+</code></pre>
+
+<h3>
+<a name="delete-a-template" class="anchor" href="#delete-a-template"><span class="octicon octicon-link"></span></a>Delete a template</h3>
+
+<pre><code> elasticsearch::template { 'templatename':
+   ensure =&gt; 'absent'
+ }
+</code></pre>
+
+<h3>
+<a name="host" class="anchor" href="#host"><span class="octicon octicon-link"></span></a>Host</h3>
+
+<p>Default it uses localhost:9200 as host. you can change this with the 'host' and 'port' variables</p>
+
+<pre><code> elasticsearch::template { 'templatename':
+   host =&gt; $::ipaddress,
+   port =&gt; 9200
+ }
+</code></pre>
+
+<h2>
+<a name="bindings--clients" class="anchor" href="#bindings--clients"><span class="octicon octicon-link"></span></a>Bindings / clients</h2>
+
+<p>Install a variety of <a href="http://www.elasticsearch.org/guide/clients/">clients/bindings</a>:</p>
+
+<h3>
+<a name="python" class="anchor" href="#python"><span class="octicon octicon-link"></span></a>Python</h3>
+
+<pre><code> elasticsearch::python { 'rawes': }
+</code></pre>
+
+<h3>
+<a name="ruby" class="anchor" href="#ruby"><span class="octicon octicon-link"></span></a>Ruby</h3>
+
+<pre><code> elasticsearch::ruby { 'elasticsearch': }
+</code></pre>
+
+<h2>
+<a name="plugins" class="anchor" href="#plugins"><span class="octicon octicon-link"></span></a>Plugins</h2>
+
+<p>Install <a href="http://www.elasticsearch.org/guide/clients/">a variety of plugins</a>:</p>
+
+<h3>
+<a name="from-official-repository" class="anchor" href="#from-official-repository"><span class="octicon octicon-link"></span></a>From official repository:</h3>
+
+<pre><code> elasticsearch::plugin{'mobz/elasticsearch-head':
+   module_dir =&gt; 'head'
+ }
+</code></pre>
+
+<h3>
+<a name="from-custom-url" class="anchor" href="#from-custom-url"><span class="octicon octicon-link"></span></a>From custom url:</h3>
+
+<pre><code> elasticsearch::plugin{ 'elasticsearch-jetty':
+   module_dir =&gt; 'jetty',
+   url        =&gt; 'https://oss-es-plugins.s3.amazonaws.com/elasticsearch-jetty/elasticsearch-jetty-0.90.0.zip'
+ }
+</code></pre>
+
+<h2>
+<a name="java-install" class="anchor" href="#java-install"><span class="octicon octicon-link"></span></a>Java install</h2>
+
+<p>For those that have no separate module for installation of java:</p>
+
+<pre><code> class { 'elasticsearch':
+   java_install =&gt; true
+ }
+</code></pre>
+
+<p>If you want a specific java package/version:</p>
+
+<pre><code> class { 'elasticsearch':
+   java_install =&gt; true,
+   java_package =&gt; 'packagename'
+ }
+</code></pre>
+
+<h2>
+<a name="service-providers" class="anchor" href="#service-providers"><span class="octicon octicon-link"></span></a>Service providers</h2>
+
+<p>Currently only the 'init' service provider is supported but others can be implemented quite easy.</p>
+
+<h3>
+<a name="init" class="anchor" href="#init"><span class="octicon octicon-link"></span></a>init</h3>
+
+<h4>
+<a name="defaults-file" class="anchor" href="#defaults-file"><span class="octicon octicon-link"></span></a>Defaults file</h4>
+
+<p>You can populate the defaults file ( /etc/defaults/elasticsearch or /etc/sysconfig/elasticsearch )</p>
+
+<h5>
+<a name="hash-representation" class="anchor" href="#hash-representation"><span class="octicon octicon-link"></span></a>hash representation</h5>
+
+<pre><code> class { 'elasticsearch':
+   init_defaults =&gt; { 'ES_USER' =&gt; 'elasticsearch', 'ES_GROUP' =&gt; 'elasticsearch' }
+ }
+</code></pre>
+
+<h5>
+<a name="file-source" class="anchor" href="#file-source"><span class="octicon octicon-link"></span></a>file source</h5>
+
+<pre><code> class { 'elasticsearch':
+   init_defaults_file =&gt; 'puppet:///path/to/defaults'
+ }
+</code></pre>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/elasticsearch/puppet-elasticsearch/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/elasticsearch/puppet-elasticsearch/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/elasticsearch/puppet-elasticsearch"></a> is maintained by <a href="https://github.com/elasticsearch">elasticsearch</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
