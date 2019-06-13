@@ -4,6 +4,8 @@
 [![Puppet Forge Version](https://img.shields.io/puppetforge/v/elastic/elasticsearch.svg)](https://forge.puppetlabs.com/elastic/elasticsearch)
 [![Puppet Forge Downloads](https://img.shields.io/puppetforge/dt/elastic/elasticsearch.svg)](https://forge.puppetlabs.com/elastic/elasticsearch)
 
+*MOVED TO vend/puppet*
+
 #### Table of Contents
 
 1. [Module description - What the module does and why it is useful](#module-description)
